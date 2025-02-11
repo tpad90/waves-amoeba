@@ -24,6 +24,10 @@ let loudestVolume = 0; // Variable to track loudest volume observed
 let timeToAnalyze = 20; // Time (in seconds) to analyze for setting volume threshold
 let analysisStartTime; // Variable to store the start time of analysis
 
+let soundVolume = 0.2; // Initial volume (0.0 to 1.0)
+let isPlaying = false; // Track whether the sound is playing
+
+
 function preload() {
   sound = loadSound('relaxing-forest-danamusic.mp3'); // Load the sound
 }
@@ -55,9 +59,35 @@ function mouseClicked() {
     particles.push(new Particle(mouseX + offsetX, mouseY + offsetY, random(5, 15)));
   }
 
-  if (!sound.isPlaying()) { // Play sound only if not already playing
+  if (!isPlaying) { // Play sound only if not already playing
+    sound.setVolume(soundVolume); // Set the volume before playing
     sound.play(); // Play sound on the first click
+    isPlaying = true;
   }
+}
+
+function keyPressed() {
+  if (key === 'p' || key === 'P') {
+    if (isPlaying) {
+      sound.pause();
+      isPlaying = false;
+    } else {
+      sound.play(); // Resume from where it left off
+      isPlaying = true;
+    }
+  }
+
+    if (key === '+') {
+        soundVolume = min(1, soundVolume + 0.1); // Increase volume, max 1
+        sound.setVolume(soundVolume);
+        console.log("Volume:", soundVolume); // For debugging
+    }
+
+    if (key === '-') {
+        soundVolume = max(0, soundVolume - 0.1); // Decrease volume, min 0
+        sound.setVolume(soundVolume);
+        console.log("Volume:", soundVolume); // For debugging
+    }
 }
 
 function changeColor() {
